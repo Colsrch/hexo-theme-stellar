@@ -15,7 +15,25 @@
         server: '<%= theme.comments.artalk.server %>',
         placeholder: '<%= theme.comments.artalk.placeholder %>',
         site: '<%= config.title %>',
-        darkMode: '<%= theme.comments.artalk.darkMode %>'
+        darkMode: '<%= theme.comments.artalk.darkMode %>',
+        pvEl: '#artalk_visitors',
+        <% if(!!theme.comments.artalk.imageUploader?.api){ %>
+        imgUploader: function(file) {
+          let headers = new Headers();
+          headers.set('Accept', 'application/json');
+          <% if(!!theme.comments.artalk.imageUploader?.token) { %>
+            headers.set('Authorization', '<%= theme.comments.artalk.imageUploader?.token %>')
+          <% } %>
+          let formData = new FormData();
+          formData.append('file', file);
+          return fetch('<%= theme.comments.artalk.imageUploader?.api %>',{
+            method: 'POST',
+            body: formData,
+            headers: headers
+            }).then((resp) => resp.json())
+              .then((resp) => resp.<%= theme.comments.artalk.imageUploader?.resp %>)
+        },
+        <% } %>
         })
       });
   }
